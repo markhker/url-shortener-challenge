@@ -2,7 +2,7 @@ const router = require('express').Router();
 const url = require('./url');
 
 
-router.get('/:hash', async (req, res, next) => {
+router.get('/api/item/:hash', async (req, res) => {
 
   const source = await url.getUrl(req.params.hash);
 
@@ -31,12 +31,19 @@ router.get('/:hash', async (req, res, next) => {
 });
 
 
-router.post('/', async (req, res, next) => {
+router.post('/api/item', async (req, res, next) => {
 
   // TODO: Validate 'req.body.url' presence
 
+  if(typeof req.body.url != "string"){
+		let err = new Error('URL is a required parameter');
+		err.status = 400;
+		next(err);
+		return;
+	}
+
   try {
-    let shortUrl = await url.shorten(req.body.url, url.generateHash(req.body.url));
+    let shortUrl = await url.shorten(req.body.url);
     res.json(shortUrl);
   } catch (e) {
     // TODO: Personalized Error Messages
