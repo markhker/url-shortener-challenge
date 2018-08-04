@@ -72,7 +72,7 @@ async function shorten(url) {
         active: true
       });
 
-      // TODO: Handle save errors - DONE
+      // TODO: Handle save errors
       const saved = await shortUrl.save(err => {
         if(err) {
           throw new Error('Data not saved');
@@ -100,9 +100,22 @@ function isValid(url) {
   return validUrl.isUri(url);
 }
 
+/**
+ * Log visits
+ * @param {string} hash
+ * @returns {object}
+ */
+async function sumVisit (hash) {
+  return await UrlModel.findOneAndUpdate(
+    { hash },
+    { $inc: { visits: 1 } }
+  );
+}
+
 module.exports = {
   shorten,
   getUrl,
   generateRemoveToken,
-  isValid
+  isValid,
+  sumVisit
 }
